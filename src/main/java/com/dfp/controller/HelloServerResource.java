@@ -12,6 +12,6 @@ public class HelloServerResource {
     public String helloServer(){
 
         return "{\"version\":\"v1.0\",\n" +
-                "\"msg\":\"Welcome to DFP, you have successfully deployed your first Spirng boot application with digital foundation plateform!\"}";
+                "\"msg\":\"Hello!! Greetings from DFP. You have successfully deployed your first Spring boot application with DFP cloud platform!\"}";
     }
 }
