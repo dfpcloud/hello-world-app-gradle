@@ -1,15 +1,14 @@
-FROM java:8 
-# Install maven
-RUN apt-get update
-RUN apt-get -y install  wget unzip
-RUN apt-get install -y maven
+FROM alpine:3.9
+USER root
 
-RUN wget https://services.gradle.org/distributions/gradle-3.5-bin.zip
+RUN apk add --update \
+    curl \
+    openjdk8=8.201.08-r1 \
+ && rm /var/cache/apk/* \
+ && echo "securerandom.source=file:/dev/urandom" >> /usr/lib/jvm/default-jvm/jre/lib/security/java.security
 
-RUN mkdir /opt/gradle
-RUN unzip -d /opt/gradle gradle-3.5-bin.zip
-
-RUN export PATH=$PATH:/opt/gradle/gradle-3.5/bin
+#insatll gradle
+RUN apk add gradle
 
 WORKDIR /code
 
@@ -19,5 +18,7 @@ ADD build.gradle /code/build.gradle
 # Adding source, compile and package into a fat jar
 ADD src /code/src
 RUN ["gradle", "build"]
-EXPOSE 8080
-CMD ["/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "build/libs/hello-world-app-gradle-0.0.1-SNAPSHOT.jar"]
+
+ADD ./build/libs/*.jar app.jar
+
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
